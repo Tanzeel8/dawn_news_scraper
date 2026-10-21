@@ -1,6 +1,13 @@
+# Ignore generated output
+output/
+
+# Ignore Python cache
 __pycache__/
 *.pyc
-*.pyo
-*.pyd
-.vscode/
-output/*.csv
+
+# Ignore virtual environment
+venv/
+env/
+
+# Ignore dotenv file
+.env
