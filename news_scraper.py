@@ -1,14 +1,14 @@
+import os
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
-import os
 
-# Output folder
-if not os.path.exists("output"):
-    os.makedirs("output")
+# Make sure the output folder exists
+os.makedirs("output", exist_ok=True)
 
 URL = "https://www.dawn.com/latest-news"
-response = requests.get(URL, headers={"User-Agent": "Mozilla/5.0"})
+response = requests.get(URL, headers={"User-Agent": "Mozilla/5.0"}, timeout=20)
+response.raise_for_status()
 soup = BeautifulSoup(response.text, "html.parser")
 
 headlines = []
@@ -21,10 +21,13 @@ for item in soup.select("article h2 a"):
 
 df = pd.DataFrame(headlines)
 
-# Save CSV
-df.to_csv("output/news.csv", index=False, encoding="utf-8")
+# Remove duplicate headlines
+df = df.drop_duplicates(subset=["link"]).reset_index(drop=True)
+
+# Save CSV (utf-8-sig so Excel shows special characters correctly)
+df.to_csv("output/news.csv", index=False, encoding="utf-8-sig")
 
 # Save Excel
 df.to_excel("output/news.xlsx", index=False, engine="openpyxl")
 
-print(f"✅ {len(headlines)} headlines scraped and saved to output/news.csv & output/news.xlsx")
+print(f"✅ {len(df)} headlines scraped and saved to output/news.csv & output/news.xlsx")
