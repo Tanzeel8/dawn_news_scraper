@@ -1,13 +1,19 @@
-import os
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+import os
 
-# Make sure the output folder exists
-os.makedirs("output", exist_ok=True)
+# Output folder
+if not os.path.exists("output"):
+    os.makedirs("output")
 
 URL = "https://www.dawn.com/latest-news"
-response = requests.get(URL, headers={"User-Agent": "Mozilla/5.0"}, timeout=20)
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36"
+}
+
+response = requests.get(URL, headers=HEADERS, timeout=20)
+print("Status code:", response.status_code)
 response.raise_for_status()
 soup = BeautifulSoup(response.text, "html.parser")
 
